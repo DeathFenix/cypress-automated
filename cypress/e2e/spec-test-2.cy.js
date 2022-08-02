@@ -179,6 +179,14 @@ describe('Primeiro Teste Cypress', () => {
   */
 
     // **** CAP 11 - Integração continua ****
+    /*
+     - git init
+     - git status
+     - git add .
+     [ git reset HEAD <nome arquivo>]
+     - git commit - m "xx"
+     - git push origin main
+    */
 
 
 })
