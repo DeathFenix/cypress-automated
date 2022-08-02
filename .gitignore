@@ -4,4 +4,3 @@ cypress/downloads/
 cypress/screenshots/
 cypress/videos/
 .npmrc
-package-lock.json
