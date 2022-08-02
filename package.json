@@ -1,0 +1,14 @@
+{
+  "name": "cypress1",
+  "version": "10.4.0",
+  "description": "testes automatizados cypres v1",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run"
+  },
+  "author": "Alan Leandro",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^10.4.0"
+  }
+}
