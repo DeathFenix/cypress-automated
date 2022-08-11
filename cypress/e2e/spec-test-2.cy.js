@@ -2,6 +2,8 @@
 
 describe('Primeiro Teste Cypress', () => {
 
+  const THREE_SECONDS_IN_MS = 3000
+
   beforeEach(function(){
     cy.viewport(410,860) // muda o tamanho da tela
     cy.visit('../src/index.html')
@@ -14,6 +16,8 @@ describe('Primeiro Teste Cypress', () => {
   it('Preenche os campos obrigatórios e envia o formulário', () => {
     const longText = 'Texto muuuuuuuuuuito looooooooongo, muuuuuuito looooooongo, muito longo, muito longoooooooooooooooooo.'
 
+    cy.clock() //aula 12 cy.clock
+    
     cy.get('#firstName').type('Alan')
     cy.get('#lastName').type('Leandro')
     cy.get('#email').type('aleandr1@ford.com')
@@ -21,9 +25,15 @@ describe('Primeiro Teste Cypress', () => {
     cy.get('button[type="submit"]').click()
 
     cy.get('.success').should('be.visible')
+
+    cy.tick(THREE_SECONDS_IN_MS) //aula 12 cy.tick
+
+    cy.get('.success').should('not.be.visible')
   })
 
   it('Exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', () => {
+    cy.clock() //aula 12 cy.clock
+
     cy.get('#firstName').type('Alan')
     cy.get('#lastName').type('Leandro')
     cy.get('#email').type('aleandr1@ford,com') //email inválido
@@ -31,6 +41,10 @@ describe('Primeiro Teste Cypress', () => {
     cy.get('button[type="submit"]').click()
 
     cy.get('.error').should('be.visible')
+
+    cy.tick(THREE_SECONDS_IN_MS) //aula 12 cy.tick
+
+    cy.get('.success').should('not.be.visible')
   })
 
   it('campo telefone continua vazio quando preenchida com valor não numérico', () => {
@@ -38,6 +52,8 @@ describe('Primeiro Teste Cypress', () => {
   });
 
   it('Exibe mensagem de erro quando o telefone se torna obrigatório e não é preenchido', () => {
+    cy.clock() //aula 12 cy.clock
+    
     cy.get('#firstName').type('Alan')
     cy.get('#lastName').type('Leandro')
     cy.get('#email').type('aleandr1@ford.com') 
@@ -46,6 +62,10 @@ describe('Primeiro Teste Cypress', () => {
     cy.get('button[type="submit"]').click()
 
     cy.get('.error').should('be.visible')
+
+    cy.tick(THREE_SECONDS_IN_MS) //aula 12 cy.tick
+
+    cy.get('.success').should('not.be.visible')
   });
 
   it('Preenche e limpa os campos nome, sobrenome, email, e telefone', () => {
@@ -56,15 +76,27 @@ describe('Primeiro Teste Cypress', () => {
   });
 
   it('Exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
+    cy.clock()
+
     cy.contains('button', 'Enviar').click() //usando o comando contains
 
     cy.get('.error').should('be.visible')
+
+    cy.tick(THREE_SECONDS_IN_MS) //aula 12 cy.tick
+
+    cy.get('.success').should('not.be.visible')
   });
 
   it('Envia o formulário com sucesso usando um comando customizado', () => {
+    cy.clock()
+    
     cy.fillMandatoryFieldsAndSubmit()
 
     cy.get('.success').should('be.visible')
+
+    cy.tick(THREE_SECONDS_IN_MS) //aula 12 cy.tick
+
+    cy.get('.success').should('not.be.visible')
   });
 
   // **** CAP 4 - Combo box****
@@ -160,11 +192,15 @@ describe('Primeiro Teste Cypress', () => {
     cy.contains('Talking About Testing').should('be.visible')
   });
 
-  it.only('Testa a página da política de forma independente', () => {
-    cy.visit('../src/privacy.html')
+  Cypress._.times(3, ()=> { //aula 
+    
+    it('Testa a página da política de forma independente', () => {
+      cy.visit('../src/privacy.html')
 
-    cy.contains('Talking About Testing').should('be.visible')
-  });
+      cy.contains('Talking About Testing').should('be.visible')
+    });
+
+  })
 
   // **** CAP 9 - Simulando o viewport de um dispositivo móvel ****
   //npx cypress run --browser chrome               [rodar modo headless ]
@@ -187,6 +223,59 @@ describe('Primeiro Teste Cypress', () => {
      - git commit - m "xx"
      - git push origin main
     */
+
+
+    // **** CAP 12 - Avançando no Cypress ****    
+     it('Exibe e esconde as mensagens de sucesso e erro usando o .invoke', () => {
+      cy.get('.success')
+        .should('not.be.visible')
+        .invoke('show')
+        .should('be.visible')
+        .and('contain', 'Mensagem enviada com sucesso')
+        .invoke('hide')
+        .should('not.be.visible')
+      cy.get('.error')
+        .should('not.be.visible')
+        .invoke('show')
+        .should('be.visible')
+        .and('contain', 'Valide os campos obrigatórios!')
+        .invoke('hide')
+        .should('not.be.visible')
+      
+    });
+
+    it('Preenche a area de texto usando o comando invoke', () => {
+      const longText = Cypress._.repeat('0123456789', 20)
+
+      cy.get('#open-text-area')
+        .invoke('val', longText)
+        .should('have.value', longText)
+      
+    });
+
+    it('Faz uma requisição HTTP', () => {
+      cy.request('https://cac-tat.s3.eu-central-1.amazonaws.com/index.html')
+        .should((response)=>{
+          const { status, statusText, body } = response
+
+          expect(status).to.equal(200)
+          expect(statusText).to.equal('OK')
+          expect(body).to.include('CAC TAT')
+        })
+      
+    });
+
+    it.only('Encontra o gato escondido', () => {
+      cy.get('#cat')
+        .invoke('show')
+        .should('be.visible')
+        
+      cy.get('#title')
+        .invoke('text', 'CAT TAT')
+      cy.get('#subtitle')
+        .invoke('text', 'I love cats')
+
+    });
 
 
 })
